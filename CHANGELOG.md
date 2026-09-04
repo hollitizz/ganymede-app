@@ -1,5 +1,11 @@
 # ganymede-app
 
+## 1.19.2
+
+### Patch Changes
+
+- 34cf494: Correction de l'affichage de la carte DofusDB
+
 ## 1.19.1
 
 ### Patch Changes
