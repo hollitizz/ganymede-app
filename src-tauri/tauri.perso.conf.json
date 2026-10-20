@@ -1,0 +1,12 @@
+{
+  "productName": "Ganymede (perso)",
+  "identifier": "com.hollitizz.ganymede-perso",
+  "bundle": {
+    "createUpdaterArtifacts": false
+  },
+  "plugins": {
+    "updater": {
+      "endpoints": []
+    }
+  }
+}

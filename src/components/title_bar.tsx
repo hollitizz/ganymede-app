@@ -20,6 +20,7 @@ import {
 } from 'lucide-react'
 import { toast } from 'sonner'
 
+import { Badge } from '@/components/ui/badge.tsx'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -35,6 +36,7 @@ import { useOpenDofusDbHunt } from '@/mutations/open_dofusdb_hunt.mutation.ts'
 import { useOpenDofusDbMap } from '@/mutations/open_dofusdb_map.mutation.ts'
 import { useOpenUrlInBrowser } from '@/mutations/open_url_in_browser.ts'
 import { useStartOAuthFlow } from '@/mutations/start_oauth_flow.mutation.ts'
+import { appIdentifierQuery, OFFICIAL_APP_IDENTIFIER } from '@/queries/app_identifier.query.ts'
 import { confQuery } from '@/queries/conf.query.ts'
 import { getAuthTokensQuery } from '@/queries/get_auth_tokens.query.ts'
 
@@ -53,10 +55,12 @@ export function TitleBar() {
   const conf = useQuery(confQuery)
   const openDofusDbHunt = useOpenDofusDbHunt()
   const openDofusDbMap = useOpenDofusDbMap()
+  const appIdentifier = useQuery(appIdentifierQuery)
 
   const linksAreDisabled = location.pathname.includes('app-old-version')
   const isImageViewer = isInImageViewerPath(location.pathname)
   const title = location.search.title || 'Ganymède'
+  const isLocalBuild = appIdentifier.isSuccess && appIdentifier.data !== OFFICIAL_APP_IDENTIFIER
 
   return (
     <div className="pointer-events-auto sticky top-0 z-60 flex h-titlebar items-center bg-surface-inset text-primary-foreground">
@@ -166,6 +170,11 @@ export function TitleBar() {
       )}
       <p className="center-absolute cursor-default text-center text-sm font-semibold select-none sm:text-base">
         {title}
+        {isLocalBuild && (
+          <Badge className="ml-1 px-1.5 py-0 align-middle text-[10px]" title={t`Version locale`} variant="secondary">
+            <Trans>locale</Trans>
+          </Badge>
+        )}
       </p>
       <p className="relative z-10 size-full grow" data-tauri-drag-region="" />
       <div className="flex h-full justify-end">

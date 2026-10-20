@@ -18,6 +18,10 @@ const fn default_auto_open_guides() -> bool {
     true
 }
 
+const fn default_use_chained_commands() -> bool {
+    true
+}
+
 fn default_reset_conf_shortcut() -> String {
     "Alt+Shift+P".to_string()
 }
@@ -32,6 +36,14 @@ fn default_go_previous_step_shortcut() -> String {
 
 fn default_copy_current_step_shortcut() -> String {
     "CommandOrControl+Shift+C".to_string()
+}
+
+const fn default_auto_travel_copy_on_step_change() -> bool {
+    true
+}
+
+const fn default_auto_travel_step_source() -> AutoTravelStepSource {
+    AutoTravelStepSource::Current
 }
 
 // Enums
@@ -65,6 +77,14 @@ pub enum ConfLang {
     Pt,
 }
 
+#[derive(Debug, Default, Clone, Serialize, Deserialize, taurpc::specta::Type)]
+pub enum ZaapCopyMode {
+    Name,
+    Position,
+    #[default]
+    Command,
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, taurpc::specta::Type)]
 pub enum ConfTheme {
     Default,
@@ -94,6 +114,12 @@ pub enum FontSize {
 pub enum GuideDisplay {
     Dynamic,
     Small,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, taurpc::specta::Type)]
+pub enum AutoTravelStepSource {
+    Current,
+    Next,
 }
 
 // Structs
@@ -165,6 +191,10 @@ pub struct Note {
 #[serde(rename_all = "camelCase")]
 pub struct Conf {
     pub auto_travel_copy: bool,
+    #[serde(default = "default_auto_travel_copy_on_step_change")]
+    pub auto_travel_copy_on_step_change: bool,
+    #[serde(default = "default_auto_travel_step_source")]
+    pub auto_travel_step_source: AutoTravelStepSource,
     pub show_done_guides: bool,
     #[serde(default)]
     pub lang: ConfLang,
@@ -183,6 +213,14 @@ pub struct Conf {
     pub auto_open_guides: bool,
     #[serde(default)]
     pub shortcuts: Shortcuts,
+    #[serde(default)]
+    pub zaap_copy_mode: ZaapCopyMode,
+    #[serde(default = "default_use_chained_commands")]
+    pub use_chained_commands: bool,
+    #[serde(default)]
+    pub allow_zaap_surcharge: bool,
+    #[serde(default)]
+    pub repeat_zaap_before_travel: bool,
 }
 
 // Functions
@@ -330,6 +368,8 @@ impl Default for Conf {
 
         Conf {
             auto_travel_copy: true,
+            auto_travel_copy_on_step_change: default_auto_travel_copy_on_step_change(),
+            auto_travel_step_source: AutoTravelStepSource::Current,
             show_done_guides: true,
             lang: ConfLang::default(),
             theme: ConfTheme::default(),
@@ -342,6 +382,10 @@ impl Default for Conf {
             opacity: 0.98,
             auto_open_guides: true,
             shortcuts: Shortcuts::default(),
+            zaap_copy_mode: ZaapCopyMode::default(),
+            use_chained_commands: default_use_chained_commands(),
+            allow_zaap_surcharge: false,
+            repeat_zaap_before_travel: false,
         }
     }
 }
@@ -383,6 +427,57 @@ pub fn ensure_conf_file(app_handle: &AppHandle) -> Result<(), Error> {
     }
 
     Ok(())
+}
+
+#[cfg(test)]
+mod travel_copy_tests {
+    use super::{Conf, ZaapCopyMode};
+
+    #[test]
+    fn existing_configuration_keeps_autopilot_and_defaults_new_preferences() {
+        let defaults = Conf::default();
+
+        assert!(matches!(defaults.zaap_copy_mode, ZaapCopyMode::Command));
+        assert!(defaults.use_chained_commands);
+        assert!(!defaults.allow_zaap_surcharge);
+
+        let mut value = serde_json::to_value(defaults).unwrap();
+        value.as_object_mut().unwrap().remove("zaapCopyMode");
+        value.as_object_mut().unwrap().remove("useChainedCommands");
+        value.as_object_mut().unwrap().remove("allowZaapSurcharge");
+        value["autoTravelCopy"] = serde_json::json!(false);
+
+        let restored: Conf = serde_json::from_value(value).unwrap();
+
+        assert!(!restored.auto_travel_copy);
+        assert!(matches!(restored.zaap_copy_mode, ZaapCopyMode::Command));
+        assert!(restored.use_chained_commands);
+        assert!(!restored.allow_zaap_surcharge);
+    }
+
+    #[test]
+    fn new_preferences_survive_serialization_in_every_mode() {
+        for mode in [
+            ZaapCopyMode::Name,
+            ZaapCopyMode::Position,
+            ZaapCopyMode::Command,
+        ] {
+            for enabled in [false, true] {
+                let conf = Conf {
+                    zaap_copy_mode: mode.clone(),
+                    use_chained_commands: enabled,
+                    allow_zaap_surcharge: enabled,
+                    ..Conf::default()
+                };
+
+                let value = serde_json::to_value(&conf).unwrap();
+
+                let restored: Conf = serde_json::from_value(value.clone()).unwrap();
+
+                assert_eq!(serde_json::to_value(restored).unwrap(), value);
+            }
+        }
+    }
 }
 
 // TauRPC API

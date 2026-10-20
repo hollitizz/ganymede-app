@@ -18,8 +18,8 @@ msgstr ""
 msgid "{0, plural, one {Étape} other {Étapes}}"
 msgstr "{0, plural, one {Paso} other {Pasos}}"
 
-#: src/components/editor_html_parsing.tsx:104
-#: src/components/editor_html_parsing.tsx:122
+#: src/components/editor_html_parsing.tsx:143
+#: src/components/guide_copy_button.tsx:24
 #: src/components/position.tsx:15
 msgid "{content} copié"
 msgstr "{content} copiado"
@@ -37,11 +37,19 @@ msgstr "<0>Encontrarás las notas de versión en nuestro Discord <1>#changelog</
 msgid "Accéder au site officiel"
 msgstr "Acceder al sitio oficial"
 
-#: src/components/title_bar.tsx:107
+#: src/components/title_bar.tsx:111
 msgid "Accueil"
 msgstr "Inicio"
 
-#: src/routes/_app/settings.tsx:187
+#: src/routes/_app/-settings/chained_commands_setting.tsx:20
+msgid "Activez la copie d'autopilote et choisissez Commande pour la copie du zaap."
+msgstr "Activa la copia del piloto automático y selecciona Comando para copiar el zaap."
+
+#: src/routes/_app/-settings/chained_commands_setting.tsx:23
+msgid "Activez la copie d'autopilote pour utiliser les commandes chaînées."
+msgstr "Activa la copia del piloto automático para usar comandos encadenados."
+
+#: src/routes/_app/settings.tsx:239
 msgid "Afficher les guides terminés"
 msgstr "Mostrar las guías terminadas"
 
@@ -70,7 +78,7 @@ msgstr "Ir al paso"
 msgid "Annuler"
 msgstr "Cancelar"
 
-#: src/routes/_app/settings.tsx:202
+#: src/routes/_app/settings.tsx:270
 msgid "Apparence"
 msgstr "Apariencia"
 
@@ -140,17 +148,21 @@ msgstr "No hay misiones que coincidan con tu búsqueda."
 msgid "Aujourd'hui"
 msgstr "Hoy"
 
-#: src/components/title_bar.tsx:126
+#: src/components/title_bar.tsx:130
 #: src/routes/_app/auto-pilot.tsx:25
 #: src/routes/_app/auto-pilot.tsx:49
 msgid "Autopilotage"
 msgstr "Piloto automático"
 
+#: src/routes/_app/-settings/zaap_surcharge_setting.tsx:28
+msgid "Autoriser la surtaxe des zaaps"
+msgstr "Permitir el recargo de los zaaps"
+
 #: src/components/welcome_card.tsx:25
 msgid "Bienvenue sur <0>GANYMÈDE</0> !"
 msgstr "¡Bienvenido a <0>GÁNYMEDE</0>!"
 
-#: src/components/title_bar.tsx:144
+#: src/components/title_bar.tsx:148
 msgid "Carte"
 msgstr "Mapa"
 
@@ -166,11 +178,11 @@ msgstr "Causado por"
 msgid "Ce message n'a pas pu être affiché. Vous pouvez le marquer comme lu."
 msgstr "No se ha podido mostrar este mensaje. Puedes marcarlo como leído."
 
-#: src/routes/_app/settings.tsx:122
+#: src/routes/_app/settings.tsx:127
 msgid "Ce raccourci est déjà utilisé"
 msgstr "Este atajo ya está en uso"
 
-#: src/routes/_app.tsx:116
+#: src/routes/_app.tsx:115
 msgid "Certaines données locales sont invalides et bloquent la synchronisation."
 msgstr "Algunos datos locales no son válidos y bloquean la sincronización."
 
@@ -193,7 +205,7 @@ msgstr "Campo desconocido: {0}"
 msgid "Champ manquant : {0}"
 msgstr "Campo que falta: {0}"
 
-#: src/components/title_bar.tsx:154
+#: src/components/title_bar.tsx:158
 msgid "Chasse au trésor"
 msgstr "Búsqueda del tesoro"
 
@@ -201,48 +213,52 @@ msgstr "Búsqueda del tesoro"
 msgid "Choisir un guide"
 msgstr "Elegir una guía"
 
+#: src/routes/_app/-settings/chained_commands_setting.tsx:22
+msgid "Choisissez Commande pour la copie du zaap afin d'utiliser les commandes chaînées."
+msgstr "Selecciona Comando para copiar el zaap y usar comandos encadenados."
+
 #: src/routes/_app/guides/index.tsx:84
 #: src/routes/_app/guides/index.tsx:238
 msgid "Choisissez un guide"
 msgstr "Elija una guía"
 
-#: src/components/editor_html_parsing.tsx:324
+#: src/components/editor_html_parsing.tsx:360
 msgid "Cliquez pour copier le nom de l'objet. ⌘+clic pour ouvrir sur dofusdb"
 msgstr "Haz clic para copiar el nombre del objeto. ⌘+clic para abrir en dofusdb"
 
-#: src/components/editor_html_parsing.tsx:328
+#: src/components/editor_html_parsing.tsx:364
 msgid "Cliquez pour copier le nom de l'objet. ⌘+clic pour ouvrir sur MethodWakfu"
 msgstr "Haz clic para copiar el nombre del objeto. ⌘+clic para abrir en MethodWakfu"
 
-#: src/components/editor_html_parsing.tsx:325
+#: src/components/editor_html_parsing.tsx:361
 msgid "Cliquez pour copier le nom de l'objet. Ctrl+clic pour ouvrir sur dofusdb"
 msgstr "Haz clic para copiar el nombre del objeto. Ctrl+clic para abrir en dofusdb"
 
-#: src/components/editor_html_parsing.tsx:329
+#: src/components/editor_html_parsing.tsx:365
 msgid "Cliquez pour copier le nom de l'objet. Ctrl+clic pour ouvrir sur MethodWakfu"
 msgstr "Haz clic para copiar el nombre del objeto. Ctrl+clic para abrir en MethodWakfu"
 
-#: src/components/editor_html_parsing.tsx:336
+#: src/components/editor_html_parsing.tsx:372
 msgid "Cliquez pour copier le nom de la quête. ⌘+clic pour ouvrir sur dofusdb. ⌥+clic pour ouvrir sur DPLN"
 msgstr "Haz clic para copiar el nombre de la misión. ⌘+clic para abrir en dofusdb. ⌥+clic para abrir en DPLN"
 
-#: src/components/editor_html_parsing.tsx:337
+#: src/components/editor_html_parsing.tsx:373
 msgid "Cliquez pour copier le nom de la quête. Ctrl+clic pour ouvrir sur dofusdb. Alt+clic pour ouvrir sur DPLN"
 msgstr "Haz clic para copiar el nombre de la misión. Ctrl+clic para abrir en dofusdb. Alt+clic para abrir en DPLN"
 
-#: src/components/editor_html_parsing.tsx:320
+#: src/components/editor_html_parsing.tsx:356
 msgid "Cliquez pour copier le nom du donjon. ⌘+clic pour ouvrir sur dofusdb"
 msgstr "Haz clic para copiar el nombre del calabozo. ⌘+clic para abrir en dofusdb"
 
-#: src/components/editor_html_parsing.tsx:321
+#: src/components/editor_html_parsing.tsx:357
 msgid "Cliquez pour copier le nom du donjon. Ctrl+clic pour ouvrir sur dofusdb"
 msgstr "Haz clic para copiar el nombre del calabozo. Ctrl+clic para abrir en dofusdb"
 
-#: src/components/editor_html_parsing.tsx:332
+#: src/components/editor_html_parsing.tsx:368
 msgid "Cliquez pour copier le nom du monstre. ⌘+clic pour ouvrir sur dofusdb"
 msgstr "Haz clic para copiar el nombre del monstruo. ⌘+clic para abrir en dofusdb"
 
-#: src/components/editor_html_parsing.tsx:333
+#: src/components/editor_html_parsing.tsx:369
 msgid "Cliquez pour copier le nom du monstre. Ctrl+clic pour ouvrir sur dofusdb"
 msgstr "Haz clic para copiar el nombre del monstruo. Ctrl+clic para abrir en dofusdb"
 
@@ -250,15 +266,19 @@ msgstr "Haz clic para copiar el nombre del monstruo. Ctrl+clic para abrir en dof
 msgid "Cliquez pour enregistrer"
 msgstr "Haz clic para grabar"
 
-#: src/components/editor_html_parsing.tsx:452
+#: src/components/editor_html_parsing.tsx:488
 msgid "Cliquez pour ouvrir dans le navigateur"
 msgstr "Haz clic para abrir en el navegador"
 
-#: src/components/editor_html_parsing.tsx:424
+#: src/components/editor_html_parsing.tsx:460
 msgid "Cliquez pour ouvrir dans une nouvelle fenêtre"
 msgstr "Haz clic para abrir en una ventana nueva"
 
-#: src/routes/_app/settings.tsx:273
+#: src/routes/_app/-settings/zaap_copy_setting.tsx:18
+msgid "Commande"
+msgstr "Comando"
+
+#: src/routes/_app/settings.tsx:341
 msgid "Compact (toujours)"
 msgstr "Compacta (siempre)"
 
@@ -298,30 +318,45 @@ msgstr "Contenido de la guía inválido"
 msgid "Continuer"
 msgstr "Continuar"
 
-#: src/routes/_app/settings.tsx:170
+#: src/routes/_app/-settings/repeat_zaap_setting.tsx:27
+msgid "Contournement d'un bug du jeu, à activer seulement s'il revient."
+msgstr "Solución para un error del juego, actívala solo si el error vuelve."
+
+#: src/routes/_app/settings.tsx:192
+msgid "Copie automatique au changement d'étape"
+msgstr "Copia automática al cambiar de paso"
+
+#: src/routes/_app/settings.tsx:175
 msgid "Copie d'autopilote"
 msgstr "Copia del piloto automático"
 
 #. placeholder {0}: index + 1
-#: src/routes/_app/guides/-$id/guide_page.tsx:169
+#: src/routes/_app/guides/-$id/guide_page.tsx:189
 msgid "Copie du numéro de l'étape ({0})..."
 msgstr "Copiando el número del paso ({0})..."
+
+#: src/routes/_app/-settings/zaap_copy_setting.tsx:24
+msgid "Copie du zaap"
+msgstr "Copia del zaap"
+
+#: src/components/guide_copy_button.tsx:37
+msgid "Copier : {content}"
+msgstr "Copiar: {content}"
 
 #: src/components/copy_on_click.tsx:22
 msgid "Copier : {title}"
 msgstr "Copiar: {title}"
 
-#: src/routes/_app/settings.tsx:327
+#: src/routes/_app/settings.tsx:395
 msgid "Copier l'étape actuelle"
 msgstr "Copiar paso actual"
 
-#: src/components/editor_html_parsing.tsx:106
 #: src/components/position.tsx:27
 #: src/routes/_app/auto-pilot.tsx:62
 msgid "Copier la commande autopilote"
 msgstr "Copiar el comando del piloto automático"
 
-#: src/components/editor_html_parsing.tsx:124
+#: src/components/editor_html_parsing.tsx:145
 msgid "Copier la commande zaap"
 msgstr "Copiar el comando del zaap"
 
@@ -329,17 +364,16 @@ msgstr "Copiar el comando del zaap"
 msgid "Copier la note"
 msgstr "Copiar la nota"
 
-#: src/components/editor_html_parsing.tsx:106
 #: src/components/position.tsx:27
 #: src/routes/_app/auto-pilot.tsx:62
 msgid "Copier la position"
 msgstr "Copiar la posición"
 
-#: src/components/editor_html_parsing.tsx:124
+#: src/components/editor_html_parsing.tsx:145
 msgid "Copier les commandes zaap et autopilote"
 msgstr "Copiar los comandos del zaap y del piloto automático"
 
-#: src/routes/_app/settings.tsx:399
+#: src/routes/_app/settings.tsx:467
 msgid "Créer"
 msgstr "Crear"
 
@@ -347,7 +381,7 @@ msgstr "Crear"
 msgid "Créer un guide"
 msgstr "Crear una guía"
 
-#: src/routes/_app/settings.tsx:341
+#: src/routes/_app/settings.tsx:409
 msgid "Créer un profil"
 msgstr "Crear un perfil"
 
@@ -373,7 +407,7 @@ msgstr "de <0>{0}</0>"
 msgid "Début"
 msgstr "Inicio"
 
-#: src/components/title_bar.tsx:77
+#: src/components/title_bar.tsx:81
 msgid "Déconnecté"
 msgstr "Desconectado"
 
@@ -385,7 +419,7 @@ msgstr "Descubre y añade nuevas guías a tu lista."
 msgid "Décrivez le problème rencontré. L'étape et le guide seront automatiquement inclus."
 msgstr "Describe el problema encontrado. El paso y la guía se incluirán automáticamente."
 
-#: src/routes/_app.tsx:185
+#: src/routes/_app.tsx:183
 msgid "Déplacez l'application dans le dossier Applications, puis relancez-la."
 msgstr "Mueve la aplicación a la carpeta Aplicaciones y vuelve a iniciarla."
 
@@ -417,7 +451,11 @@ msgstr "Datos de la misión mal formados"
 msgid "Dossier des guides téléchargés rafraichi"
 msgstr "Carpeta de guías descargadas actualizada"
 
-#: src/routes/_app/settings.tsx:270
+#: src/routes/_app/-settings/repeat_zaap_setting.tsx:17
+msgid "Doubler /zaap avant un /travel"
+msgstr "Enviar /zaap dos veces antes de un /travel"
+
+#: src/routes/_app/settings.tsx:338
 msgid "Dynamique (selon la fenêtre)"
 msgstr "Dinámica (según la ventana)"
 
@@ -433,7 +471,7 @@ msgstr "Escribe aquí tu nota…"
 msgid "Éditer une note"
 msgstr "Editar una nota"
 
-#: src/routes/_app/settings.tsx:307
+#: src/routes/_app/settings.tsx:375
 msgid "Efface tous vos profils et paramètres (pas les guides)"
 msgstr "Elimina todos los perfiles y ajustes (no las guías)"
 
@@ -630,12 +668,16 @@ msgstr "Error JSON"
 msgid "Erreur JSON inconnue"
 msgstr "Error JSON desconocido"
 
+#: src/routes/_app/guides/-$id/guide_page.tsx:77
+msgid "Erreur lors de la copie automatique de la position."
+msgstr "Error al copiar automáticamente la posición."
+
 #. placeholder {0}: index + 1
-#: src/routes/_app/guides/-$id/guide_page.tsx:168
+#: src/routes/_app/guides/-$id/guide_page.tsx:188
 msgid "Erreur lors de la copie du numéro de l'étape ({0})."
 msgstr "Error al copiar el número del paso ({0})."
 
-#: src/routes/_app/settings.tsx:392
+#: src/routes/_app/settings.tsx:460
 msgid "Erreur lors de la création du profil. Vérifiez le nom du profil (nom unique)."
 msgstr "Error al crear el perfil. Verifique el nombre del perfil (debe ser único)."
 
@@ -643,7 +685,7 @@ msgstr "Error al crear el perfil. Verifique el nombre del perfil (debe ser únic
 msgid "Erreur lors de la mise à jour des guides"
 msgstr "Error al actualizar las guías"
 
-#: src/routes/_app/settings.tsx:137
+#: src/routes/_app/settings.tsx:142
 msgid "Erreur lors de la mise à jour du raccourci"
 msgstr "Error al actualizar el atajo"
 
@@ -694,15 +736,20 @@ msgstr "Paso {current}"
 msgid "Étape {stepNumber}"
 msgstr "Paso {stepNumber}"
 
-#: src/routes/_app/settings.tsx:315
+#: src/routes/_app/settings.tsx:228
+msgid "Étape actuelle"
+msgstr "Paso actual"
+
+#: src/routes/_app/settings.tsx:383
 msgid "Étape précédente"
 msgstr "Paso anterior"
 
-#: src/routes/_app/settings.tsx:321
+#: src/routes/_app/settings.tsx:231
+#: src/routes/_app/settings.tsx:389
 msgid "Étape suivante"
 msgstr "Paso siguiente"
 
-#: src/components/title_bar.tsx:205
+#: src/components/title_bar.tsx:214
 #: src/routes/_app/guides/-$id/guide_tabs_trigger.tsx:262
 #: src/routes/_app/guides/-$id/report_dialog.tsx:144
 #: src/routes/_app/guides/-index/guide_update_all_result_dialog.tsx:73
@@ -741,15 +788,15 @@ msgstr "Formato de datos incorrecto"
 msgid "Ganymède - Non affilié à Ankama Games"
 msgstr "Ganymede - No afiliado a Ankama Games"
 
-#: src/routes/_app.tsx:180
+#: src/routes/_app.tsx:178
 msgid "Ganymède n'est pas installé dans le dossier Applications, ce qui peut empêcher les mises à jour automatiques."
 msgstr "Ganymède no está instalado en la carpeta Aplicaciones, lo que puede impedir las actualizaciones automáticas."
 
-#: src/routes/_app/settings.tsx:149
+#: src/routes/_app/settings.tsx:154
 msgid "Général"
 msgstr "General"
 
-#: src/routes/_app/settings.tsx:244
+#: src/routes/_app/settings.tsx:312
 msgid "Grande"
 msgstr "Grande"
 
@@ -773,7 +820,7 @@ msgstr "Guía mal formada"
 msgid "Guide téléchargé avec succès"
 msgstr "Guía descargada con éxito"
 
-#: src/components/title_bar.tsx:113
+#: src/components/title_bar.tsx:117
 #: src/routes/_app/downloads/$status.tsx:110
 msgid "Guides"
 msgstr "Guías"
@@ -844,7 +891,7 @@ msgstr "No se pudo instalar la actualización"
 msgid "Impossible d'obtenir le système de mise à jour"
 msgstr "No se puede obtener el sistema de actualización"
 
-#: src/components/editor_html_parsing.tsx:416
+#: src/components/editor_html_parsing.tsx:452
 msgid "Impossible d'ouvrir la fenêtre, ouverture dans le navigateur"
 msgstr "No se puede abrir la ventana, abriendo en el navegador"
 
@@ -867,6 +914,10 @@ msgstr "No se pueden cargar las guías del servidor."
 #: src/lib/error_formatter.tsx:835
 msgid "Impossible de convertir l'image"
 msgstr "No se puede convertir la imagen"
+
+#: src/components/guide_copy_button.tsx:28
+msgid "Impossible de copier dans le presse-papiers"
+msgstr "No se ha podido copiar al portapapeles"
 
 #: src/lib/error_formatter.tsx:222
 msgid "Impossible de créer le dossier de configuration"
@@ -1011,13 +1062,13 @@ msgstr "La actualización automática ha fallado. Descarga e instala manualmente
 msgid "La suppression des guides corrompus a échoué."
 msgstr "No se pudieron eliminar las guías corruptas."
 
-#: src/routes/_app.tsx:115
+#: src/routes/_app.tsx:114
 #: src/routes/_app/oauth/waiting.tsx:62
 msgid "La synchronisation a échoué : données invalides."
 msgstr "La sincronización ha fallado: datos no válidos."
 
 #: src/lib/sync_progress_queue.ts:27
-#: src/routes/_app.tsx:129
+#: src/routes/_app.tsx:128
 #: src/routes/_app/oauth/waiting.tsx:64
 msgid "La synchronisation a échoué."
 msgstr "La sincronización ha fallado."
@@ -1047,7 +1098,7 @@ msgid "Le nom du profil ne peut pas être vide."
 msgstr "El nombre del perfil no puede estar vacío."
 
 #. placeholder {0}: index + 1
-#: src/routes/_app/guides/-$id/guide_page.tsx:167
+#: src/routes/_app/guides/-$id/guide_page.tsx:187
 msgid "Le numéro de l'étape ({0}) a été copié dans le presse-papiers."
 msgstr "El número del paso ({0}) ha sido copiado al portapapeles."
 
@@ -1071,7 +1122,7 @@ msgstr "Guías en proceso de escritura"
 msgid "Les guides partagés par la communauté"
 msgstr "Guías compartidas por la comunidad"
 
-#: src/components/editor_html_parsing.tsx:77
+#: src/components/editor_html_parsing.tsx:98
 msgid "lien masqué"
 msgstr "enlace oculto"
 
@@ -1082,6 +1133,10 @@ msgstr "Se ha alcanzado el límite de {MAX_PINNED_PER_PROFILE} guías ancladas."
 #: src/lib/error_formatter.tsx:478
 msgid "Liste des guides malformée"
 msgstr "Lista de guías mal formada"
+
+#: src/components/title_bar.tsx:175
+msgid "locale"
+msgstr "local"
 
 #: src/components/notification_alert_dialog.tsx:175
 msgid "Marquer comme lu"
@@ -1136,6 +1191,7 @@ msgstr "Mi guía está actualizada"
 msgid "Motif de recherche invalide"
 msgstr "Patrón de búsqueda inválido"
 
+#: src/routes/_app/-settings/zaap_copy_setting.tsx:16
 #: src/routes/_app/auto-pilot.tsx:30
 #: src/routes/_app/auto-pilot.tsx:122
 msgid "Nom"
@@ -1153,11 +1209,11 @@ msgstr "Nombre del perfil actualizado correctamente."
 msgid "Non commencé"
 msgstr "No iniciado"
 
-#: src/routes/_app/settings.tsx:241
+#: src/routes/_app/settings.tsx:309
 msgid "Normale"
 msgstr "Normal"
 
-#: src/routes/_app/settings.tsx:297
+#: src/routes/_app/settings.tsx:365
 msgid "Note : Les raccourcis déjà utilisés par d'autres applications (AMD Adrenalin, Nvidia App, etc.) ne peuvent pas être enregistrés. Supprimez-les d'abord dans ces applications."
 msgstr "Nota: Los atajos ya utilizados por otras aplicaciones (AMD Adrenalin, Nvidia App, etc.) no se pueden registrar. Elimínelos primero en esas aplicaciones."
 
@@ -1169,7 +1225,7 @@ msgstr "Nota local, no sincronizada con el servidor."
 msgid "Note personnelle"
 msgstr "Nota personal"
 
-#: src/components/title_bar.tsx:132
+#: src/components/title_bar.tsx:136
 #: src/routes/_app/notes.index.tsx:32
 #: src/routes/_app/notes.index.tsx:66
 msgid "Notes"
@@ -1179,7 +1235,7 @@ msgstr "Notas"
 msgid "Notes du guide"
 msgstr "Notas de la guía"
 
-#: src/routes/_app/settings.tsx:205
+#: src/routes/_app/settings.tsx:273
 msgid "Opacité"
 msgstr "Opacidad"
 
@@ -1196,7 +1252,7 @@ msgstr "Abrir la carpeta de guías descargadas"
 msgid "Ouvrir le sommaire"
 msgstr "Abrir resumen"
 
-#: src/routes/_app/settings.tsx:153
+#: src/routes/_app/settings.tsx:158
 msgid "Ouvrir les guides à l'ouverture"
 msgstr "Abrir guías al inicio"
 
@@ -1204,9 +1260,9 @@ msgstr "Abrir guías al inicio"
 msgid "Ouvrir un guide"
 msgstr "Abrir una guía"
 
-#: src/components/title_bar.tsx:183
-#: src/routes/_app/settings.tsx:52
-#: src/routes/_app/settings.tsx:145
+#: src/components/title_bar.tsx:192
+#: src/routes/_app/settings.tsx:56
+#: src/routes/_app/settings.tsx:150
 msgid "Paramètres"
 msgstr "Configuraciones"
 
@@ -1214,13 +1270,17 @@ msgstr "Configuraciones"
 msgid "Parcourir le catalogue"
 msgstr "Explorar el catálogo"
 
-#: src/routes/_app/settings.tsx:238
+#: src/routes/_app/settings.tsx:306
 msgid "Petite"
 msgstr "Pequeña"
 
 #: src/routes/_app/guides/-index/actions_toolbar.tsx:171
 msgid "Plus d'options"
 msgstr "Más opciones"
+
+#: src/routes/_app/-settings/zaap_copy_setting.tsx:17
+msgid "Position"
+msgstr "Posición"
 
 #. placeholder {0}: isMacOs ? 'Option + Shift + P' : 'Alt + Shift + P'
 #: src/components/error_component.tsx:87
@@ -1254,7 +1314,7 @@ msgstr "Perfil \"{0}\""
 msgid "Profil \"{0}\" chargé"
 msgstr "Perfil \"{0}\" cargado"
 
-#: src/routes/_app/settings.tsx:388
+#: src/routes/_app/settings.tsx:456
 msgid "Profil créé avec succès"
 msgstr "Perfil creado con éxito"
 
@@ -1262,15 +1322,15 @@ msgstr "Perfil creado con éxito"
 msgid "Profil supprimé avec succès"
 msgstr "Perfil eliminado con éxito"
 
-#: src/routes/_app/settings.tsx:333
+#: src/routes/_app/settings.tsx:401
 msgid "Profils"
 msgstr "Perfiles"
 
-#: src/routes/_app/settings.tsx:135
+#: src/routes/_app/settings.tsx:140
 msgid "Raccourci mis à jour"
 msgstr "Atajo actualizado"
 
-#: src/routes/_app/settings.tsx:303
+#: src/routes/_app/settings.tsx:371
 msgid "Raccourcis clavier"
 msgstr "Atajos de teclado"
 
@@ -1312,7 +1372,7 @@ msgstr "Buscar un perfil..."
 msgid "Rechercher une quête"
 msgstr "Buscar una misión"
 
-#: src/components/title_bar.tsx:195
+#: src/components/title_bar.tsx:204
 msgid "Réduire"
 msgstr "Minimizar"
 
@@ -1324,7 +1384,7 @@ msgstr "Reintentar"
 msgid "Réinitialiser"
 msgstr "Restablecer"
 
-#: src/routes/_app/settings.tsx:309
+#: src/routes/_app/settings.tsx:377
 msgid "Réinitialiser la configuration"
 msgstr "Restablecer configuración"
 
@@ -1340,12 +1400,12 @@ msgstr "Respuesta de token inválida"
 msgid "Réponse GitHub malformée"
 msgstr "Respuesta de GitHub mal formada"
 
-#: src/components/title_bar.tsx:99
+#: src/components/title_bar.tsx:103
 #: src/routes/_app/oauth/waiting.tsx:76
 msgid "Se connecter"
 msgstr "Iniciar sesión"
 
-#: src/components/title_bar.tsx:86
+#: src/components/title_bar.tsx:90
 msgid "Se déconnecter"
 msgstr "Cerrar sesión"
 
@@ -1356,6 +1416,10 @@ msgstr "Volver a conectarse"
 #: src/routes/_app/guides/-index/actions_toolbar.tsx:180
 msgid "Sélectionner"
 msgstr "Seleccionar"
+
+#: src/routes/_app/-settings/zaap_surcharge_setting.tsx:43
+msgid "Sélectionnez « Commande » pour autoriser la surtaxe des zaaps."
+msgstr "Selecciona «Comando» para permitir el recargo de los zaaps."
 
 #: src/lib/error_formatter.tsx:337
 #: src/lib/error_formatter.tsx:648
@@ -1370,11 +1434,15 @@ msgstr "Sitio oficial"
 msgid "Sommaire"
 msgstr "Resumen"
 
+#: src/routes/_app/settings.tsx:211
+msgid "Source de la copie automatique"
+msgstr "Origen de la copia automática"
+
 #: src/components/step_progress/step_progress.tsx:120
 msgid "Suivant"
 msgstr "Siguiente"
 
-#: src/components/title_bar.tsx:162
+#: src/components/title_bar.tsx:166
 msgid "Supporter Ganymède"
 msgstr "Apoyar a Ganymède"
 
@@ -1408,6 +1476,10 @@ msgstr "Eliminar de la lista"
 msgid "Supprimer la note"
 msgstr "Eliminar la nota"
 
+#: src/components/editor_html_parsing.tsx:74
+msgid "Surtaxe possible de 1000k lors de l'utilisation de ce zaap depuis un autre monde"
+msgstr "Puede aplicarse un recargo de 1000 kamas al usar este zaap desde otro mundo"
+
 #: src/lib/sync_progress_queue.ts:79
 msgid "Synchro impossible — guide {label} introuvable sur le serveur."
 msgstr "Sincronización imposible — guía {label} no encontrada en el servidor."
@@ -1428,11 +1500,11 @@ msgstr "Sincronizando…"
 msgid "Synchronisation réussie."
 msgstr "Sincronización correcta."
 
-#: src/routes/_app/settings.tsx:219
+#: src/routes/_app/settings.tsx:287
 msgid "Taille de texte des guides"
 msgstr "Tamaño del texto de las guías"
 
-#: src/routes/_app/settings.tsx:254
+#: src/routes/_app/settings.tsx:322
 msgid "Taille des onglets de guides"
 msgstr "Tamaño de las pestañas de guías"
 
@@ -1454,7 +1526,7 @@ msgstr "Descargar la versión {toVersion}"
 msgid "Télécharger le guide"
 msgstr "Descargar la guía"
 
-#: src/components/title_bar.tsx:119
+#: src/components/title_bar.tsx:123
 msgid "Télécharger un guide"
 msgstr "Descargar una guía"
 
@@ -1482,11 +1554,11 @@ msgstr "Todas las guías han sido actualizadas"
 msgid "Tout fermer"
 msgstr "Cerrar todo"
 
-#: src/routes/_app/settings.tsx:247
+#: src/routes/_app/settings.tsx:315
 msgid "Très grande"
 msgstr "Extra grande"
 
-#: src/routes/_app/settings.tsx:235
+#: src/routes/_app/settings.tsx:303
 msgid "Très petite"
 msgstr "Extra pequeña"
 
@@ -1502,7 +1574,7 @@ msgstr "Ya existe un perfil con este nombre."
 msgid "Une erreur est survenue"
 msgstr "Ha ocurrido un error"
 
-#: src/components/title_bar.tsx:81
+#: src/components/title_bar.tsx:85
 msgid "Une erreur est survenue lors de la déconnexion"
 msgstr "Ocurrió un error durante el cierre de sesión"
 
@@ -1523,9 +1595,17 @@ msgstr "Ha ocurrido un error inesperado"
 msgid "Utilisateur non connecté"
 msgstr "Usuario no conectado"
 
+#: src/routes/_app/-settings/chained_commands_setting.tsx:36
+msgid "Utiliser les commandes chaînées"
+msgstr "Usar comandos encadenados"
+
 #: src/lib/error_formatter.tsx:869
 msgid "Version invalide"
 msgstr "Versión inválida"
+
+#: src/components/title_bar.tsx:174
+msgid "Version locale"
+msgstr "Versión local"
 
 #: src/components/welcome_card.tsx:50
 msgid "Voir les guides"

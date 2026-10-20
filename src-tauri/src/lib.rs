@@ -42,6 +42,7 @@ mod item;
 mod json;
 mod notifications;
 mod oauth;
+mod official_app;
 mod overlay;
 mod pinned_guides;
 mod quest;
@@ -99,7 +100,7 @@ pub fn run() {
 
     #[cfg(not(debug_assertions))]
     let sentry_client = init((
-        env!("SENTRY_DSN"),
+        option_env!("SENTRY_DSN").unwrap_or_default(),
         ClientOptions {
             release: release_name!(),
             attach_stacktrace: true,
@@ -223,6 +224,8 @@ pub fn run() {
             message: Some("app setup".into()),
             ..Default::default()
         });
+
+        official_app::import_official_app_data(app.handle());
 
         if let Err(err) = conf::ensure_conf_file(app.handle()) {
             error!("[Lib] failed to ensure conf: {:?}", err);

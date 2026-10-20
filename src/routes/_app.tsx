@@ -6,7 +6,6 @@ import { debug } from '@tauri-apps/plugin-log'
 import { useEffect } from 'react'
 import { toast } from 'sonner'
 
-import { useAppVersionCheck } from '@/hooks/use_app_version_check.ts'
 import { useReconnectToast } from '@/hooks/use_reconnect_toast.ts'
 import { useTabs } from '@/hooks/use_tabs.ts'
 import { syncProfiles } from '@/ipc/sync.ts'
@@ -169,7 +168,6 @@ function useInitialSync() {
 function AppLayout() {
   const installLocation = useQuery(installLocationQuery)
 
-  useAppVersionCheck()
   useInitialSync()
 
   // On macOS, an app run from outside the Applications folder (e.g. Downloads, or a

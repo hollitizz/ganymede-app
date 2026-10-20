@@ -55,10 +55,14 @@ export function getZaapCommand({ x, y }: Coordinates): string {
   return `/zaap ${x} ${y}`
 }
 
-export function getChainedCommand(zaap: Coordinates, position?: Coordinates): string {
+export function getChainedCommand(zaap: Coordinates, position?: Coordinates, repeatZaap = false): string {
   const zaapCommand = getZaapCommand(zaap)
 
-  return position ? `${zaapCommand} ; ${getTravelCommand(position)}` : zaapCommand
+  if (!position) return zaapCommand
+
+  const leadingZaapCommand = repeatZaap ? `${zaapCommand} ; ${zaapCommand}` : zaapCommand
+
+  return `${leadingZaapCommand} ; ${getTravelCommand(position)}`
 }
 
 export function getPositionCopyContent(position: Coordinates, autoTravelCopy: boolean): string {

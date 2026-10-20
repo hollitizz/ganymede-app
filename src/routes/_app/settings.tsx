@@ -20,7 +20,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Slider } from '@/components/ui/slider.tsx'
 import { Switch } from '@/components/ui/switch.tsx'
 import { useSwitchProfile } from '@/hooks/use_switch_profile.ts'
-import { ConfLang, FontSize, GuideDisplay, type Shortcuts } from '@/ipc/bindings.ts'
+import { AutoTravelStepSource, ConfLang, FontSize, GuideDisplay, type Shortcuts } from '@/ipc/bindings.ts'
 import { createProfileRemote } from '@/ipc/sync.ts'
 import { cn } from '@/lib/utils.ts'
 import { useNewId } from '@/mutations/new_id.mutation.ts'
@@ -28,7 +28,11 @@ import { useReregisterShortcuts } from '@/mutations/reregister_shortcuts.mutatio
 import { useSetConf } from '@/mutations/set_conf.mutation.ts'
 import { confQuery } from '@/queries/conf.query.ts'
 import { Page } from '@/routes/-page.tsx'
+import { ChainedCommandsSetting } from '@/routes/_app/-settings/chained_commands_setting.tsx'
 import { Profiles } from '@/routes/_app/-settings/profiles.tsx'
+import { RepeatZaapSetting } from '@/routes/_app/-settings/repeat_zaap_setting.tsx'
+import { ZaapCopySetting } from '@/routes/_app/-settings/zaap_copy_setting.tsx'
+import { ZaapSurchargeSetting } from '@/routes/_app/-settings/zaap_surcharge_setting.tsx'
 
 import { BackButtonLink } from './downloads/-back_button_link.tsx'
 
@@ -98,6 +102,7 @@ function Settings() {
   const switchProfile = useSwitchProfile()
   const [opacity, setOpacity] = useState(conf.data.opacity)
   const opacityDebounced = useDebounce(opacity, 300)
+  const autoTravelCopyOnStepChange = conf.data.autoTravelCopyOnStepChange ?? false
 
   // oxlint-disable react-hooks/exhaustive-deps -- no need more deps
   useEffect(() => {
@@ -181,6 +186,53 @@ function Settings() {
                 />
               </div>
             </SettingCardSection>
+            <SettingCardSection id="section-auto-travel-copy-on-step-change">
+              <div className="flex items-center justify-between gap-2">
+                <Label className="text-xs" htmlFor="auto-travel-copy-on-step-change">
+                  <Trans>Copie automatique au changement d'étape</Trans>
+                </Label>
+                <Switch
+                  checked={autoTravelCopyOnStepChange}
+                  id="auto-travel-copy-on-step-change"
+                  onCheckedChange={(checked) => {
+                    setConf.mutate({
+                      ...conf.data,
+                      autoTravelCopyOnStepChange: checked,
+                    })
+                  }}
+                />
+              </div>
+            </SettingCardSection>
+            <SettingCardSection id="section-auto-travel-step-source">
+              <Label
+                className={cn('text-xs', !autoTravelCopyOnStepChange && 'text-muted-foreground')}
+                htmlFor="auto-travel-step-source"
+              >
+                <Trans>Source de la copie automatique</Trans>
+              </Label>
+              <Select
+                disabled={!autoTravelCopyOnStepChange}
+                onValueChange={(value) => {
+                  setConf.mutate({
+                    ...conf.data,
+                    autoTravelStepSource: value as AutoTravelStepSource,
+                  })
+                }}
+                value={conf.data.autoTravelStepSource ?? 'Current'}
+              >
+                <SelectTrigger className="text-xs" disabled={!autoTravelCopyOnStepChange} id="auto-travel-step-source">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Current">
+                    <Trans>Étape actuelle</Trans>
+                  </SelectItem>
+                  <SelectItem value="Next">
+                    <Trans>Étape suivante</Trans>
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </SettingCardSection>
             <SettingCardSection id="section-show-done-guides">
               <div className="flex items-center justify-between gap-2">
                 <Label className="text-xs" htmlFor="show-done-guides">
@@ -197,6 +249,22 @@ function Settings() {
                   }}
                 />
               </div>
+            </SettingCardSection>
+
+            <SettingCardSection id="section-zaap-copy">
+              <ZaapCopySetting />
+            </SettingCardSection>
+
+            <SettingCardSection id="section-zaap-surcharge">
+              <ZaapSurchargeSetting />
+            </SettingCardSection>
+
+            <SettingCardSection id="section-chained-commands">
+              <ChainedCommandsSetting />
+            </SettingCardSection>
+
+            <SettingCardSection id="section-repeat-zaap">
+              <RepeatZaapSetting />
             </SettingCardSection>
           </SettingCard>
           <SettingCard id="section-appearance" title={<Trans>Apparence</Trans>}>

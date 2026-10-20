@@ -1,0 +1,177 @@
+name: Perso
+
+on:
+  push:
+    branches: [perso]
+  workflow_dispatch:
+
+concurrency:
+  group: perso-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  GANYMEDE_API: https://ganymede-app.com/api
+  GANYMEDE_WEBSITE: https://ganymede-app.com
+  GANYMEDE_CLIENT_ID: unused
+  GANYMEDE_API_KEY: unused
+
+jobs:
+  changes:
+    name: Detect app changes
+    runs-on: ubuntu-24.04
+    outputs:
+      build_needed: ${{ steps.detect.outputs.build_needed }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - id: detect
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BEFORE_SHA: ${{ github.event.before }}
+          HEAD_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+
+          emit() { echo "build_needed=$1" >> "$GITHUB_OUTPUT"; }
+
+          ZERO="0000000000000000000000000000000000000000"
+          if [ "$EVENT_NAME" != "push" ] || [ -z "$BEFORE_SHA" ] || [ "$BEFORE_SHA" = "$ZERO" ] \
+             || ! git cat-file -e "${BEFORE_SHA}^{commit}" 2>/dev/null; then
+            echo "No comparable base, building." >&2
+            emit true; exit 0
+          fi
+
+          CHANGED="$(git diff --name-only "$BEFORE_SHA" "$HEAD_SHA")"
+          echo "Changed files:" >&2
+          echo "$CHANGED" >&2
+
+          build_needed=false
+          while IFS= read -r f; do
+            [ -z "$f" ] && continue
+            case "$f" in
+              .github/workflows/perso.yaml) build_needed=true; break ;;
+              .github/*|.changeset/*|docs/*|*.md|*.test.ts|*.test.tsx|src/lib/fixtures/*|lefthook.yml|.vscode/*)
+                continue ;;
+            esac
+            build_needed=true; break
+          done <<< "$CHANGED"
+
+          emit "$build_needed"
+
+  release:
+    name: Create draft release
+    needs: changes
+    if: needs.changes.outputs.build_needed == 'true'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    outputs:
+      id: ${{ steps.create.outputs.result }}
+      tag: ${{ steps.version.outputs.tag }}
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v7
+      - id: version
+        run: |
+          VERSION="$(jq -r .version src-tauri/tauri.conf.json)"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag=perso-v$VERSION-${{ github.run_number }}" >> "$GITHUB_OUTPUT"
+      - id: create
+        uses: actions/github-script@v9
+        env:
+          APP_VERSION: ${{ steps.version.outputs.version }}
+          TAG: ${{ steps.version.outputs.tag }}
+        with:
+          script: |
+            const body = [
+              `Build ${context.sha.slice(0, 7)} de la branche perso (Ganymède ${process.env.APP_VERSION}).`,
+              '',
+              '- macOS : ouvrir le .dmg, glisser l\'app dans Applications, puis lancer une fois `xattr -dr com.apple.quarantine "/Applications/Ganymede (perso).app"` (app non signée).',
+              '- Windows : installeur `*_x64-setup.exe` ou version portable `*-windows-portable.zip`. Si Windows bloque : Informations complémentaires → Exécuter quand même.',
+            ].join('\n')
+            const { data } = await github.rest.repos.createRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tag_name: process.env.TAG,
+              target_commitish: context.sha,
+              name: `Ganymede (perso) ${process.env.APP_VERSION} #${context.runNumber}`,
+              body,
+              draft: true,
+              prerelease: false,
+            })
+            return data.id
+
+  build:
+    name: Build ${{ matrix.name }}
+    needs: release
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: macOS
+            platform: macos-26
+            args: --target universal-apple-darwin --bundles app,dmg
+            rust_targets: aarch64-apple-darwin,x86_64-apple-darwin
+          - name: Windows
+            platform: windows-2025
+            args: --bundles nsis
+            rust_targets: ''
+    runs-on: ${{ matrix.platform }}
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.rust_targets }}
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: './src-tauri -> target'
+          cache-on-failure: true
+      - run: pnpm install --frozen-lockfile
+      - uses: tauri-apps/tauri-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          releaseId: ${{ needs.release.outputs.id }}
+          args: ${{ matrix.args }} -c src-tauri/tauri.perso.conf.json
+      - name: Upload Windows portable zip
+        if: matrix.name == 'Windows'
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ needs.release.outputs.tag }}
+          APP_VERSION: ${{ needs.release.outputs.version }}
+        run: |
+          $folder = "portable/Ganymede (perso)"
+          $archive = "Ganymede-perso-$env:APP_VERSION-windows-portable.zip"
+          New-Item -ItemType Directory -Force $folder | Out-Null
+          Copy-Item src-tauri/target/release/ganymede.exe "$folder/Ganymede (perso).exe"
+          Compress-Archive -Path $folder -DestinationPath $archive
+          gh release upload $env:TAG $archive --clobber
+
+  publish:
+    name: Publish release
+    needs: [release, build]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/github-script@v9
+        env:
+          RELEASE_ID: ${{ needs.release.outputs.id }}
+        with:
+          script: |
+            await github.rest.repos.updateRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              release_id: Number(process.env.RELEASE_ID),
+              draft: false,
+            })
