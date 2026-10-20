@@ -54,6 +54,8 @@ mod sync;
 mod tauri_api_ext;
 mod update;
 mod user;
+#[cfg(target_os = "macos")]
+mod window_geometry;
 mod window_manager;
 
 #[cfg(dev)]
@@ -215,6 +217,8 @@ pub fn run() {
         app.manage(WindowManager::new());
 
         if let Some(main_window) = app.get_webview_window("main") {
+            #[cfg(target_os = "macos")]
+            window_geometry::restore_main_window_geometry(&main_window);
             overlay::float_above_fullscreen(&main_window);
         }
 
