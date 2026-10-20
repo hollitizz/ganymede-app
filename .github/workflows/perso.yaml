@@ -88,8 +88,7 @@ jobs:
             const body = [
               `Build ${context.sha.slice(0, 7)} de la branche perso (Ganymède ${process.env.APP_VERSION}).`,
               '',
-              '- macOS : ouvrir le .dmg, glisser l\'app dans Applications, puis lancer une fois `xattr -dr com.apple.quarantine "/Applications/Ganymede (perso).app"` (app non signée).',
-              '- Windows : installeur `*_x64-setup.exe` ou version portable `*-windows-portable.zip`. Si Windows bloque : Informations complémentaires → Exécuter quand même.',
+              'Installeur `*_x64-setup.exe` ou version portable `*-windows-portable.zip`. Si Windows bloque : Informations complémentaires → Exécuter quand même.',
             ].join('\n')
             const { data } = await github.rest.repos.createRelease({
               owner: context.repo.owner,
@@ -104,21 +103,9 @@ jobs:
             return data.id
 
   build:
-    name: Build ${{ matrix.name }}
+    name: Build Windows
     needs: release
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - name: macOS
-            platform: macos-26
-            args: --target universal-apple-darwin --bundles app,dmg
-            rust_targets: aarch64-apple-darwin,x86_64-apple-darwin
-          - name: Windows
-            platform: windows-2025
-            args: --bundles nsis
-            rust_targets: ''
-    runs-on: ${{ matrix.platform }}
+    runs-on: windows-2025
     permissions:
       contents: write
     steps:
@@ -129,8 +116,6 @@ jobs:
           node-version: 24
           cache: pnpm
       - uses: dtolnay/rust-toolchain@stable
-        with:
-          targets: ${{ matrix.rust_targets }}
       - uses: Swatinem/rust-cache@v2
         with:
           workspaces: './src-tauri -> target'
@@ -141,9 +126,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           releaseId: ${{ needs.release.outputs.id }}
-          args: ${{ matrix.args }} -c src-tauri/tauri.perso.conf.json
+          args: --bundles nsis -c src-tauri/tauri.perso.conf.json
       - name: Upload Windows portable zip
-        if: matrix.name == 'Windows'
         shell: pwsh
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
