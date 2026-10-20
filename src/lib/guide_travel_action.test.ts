@@ -52,12 +52,17 @@ describe('existing guide travel blocks', () => {
     ['Zaap du Coin des Bouftous', '3 maps en bas', 'Cliquez sur la statue', '6 maps à droite'],
     ['Zaap du Coin des Bouftous', 'Zaapi vers le Quai de la Bricole', '3 maps en bas', '6 maps à droite'],
     ['Zaap du Coin des Bouftous', '3 maps en bas', '6 maps à droite pour débloquer le zaap'],
-    ['Zaap du Coin des Bouftous', '3 maps en bas', '5 maps à droite'],
     ['Zaap du Coin des Bouftous', 'Portail vers Incarnam'],
     ['Ne prenez pas le Zaap du Coin des Bouftous', '3 maps en bas', '6 maps à droite'],
     ['Zaap du lieu inconnu', '3 maps en bas', '6 maps à droite'],
-  ])('does not collapse an unsafe or inconsistent route: %j', (...actions) => {
+  ])('does not collapse an unsafe route: %j', (...actions) => {
     expect(analyzeGuideHtml(createRouteHtml(actions)).destinations.size).toBe(0)
+  })
+
+  test('chains a walking route whose map count does not reach the destination', () => {
+    const route = createRouteHtml(['Zaap du Coin des Bouftous', '1 map à droite', '4 maps à gauche', '2 maps en bas'])
+
+    expect([...analyzeGuideHtml(route).destinations.values()]).toEqual([{ x: 11, y: 10, zaap }])
   })
 
   test.each([

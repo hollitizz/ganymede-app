@@ -262,51 +262,20 @@ function findFollowingTaskList(nodes: DOMNode[], headingIndex: number): Element 
   return node && isHtmlElement(node, 'ul') && node.attribs['data-type'] === 'taskList' ? node : undefined
 }
 
-function parseCardinalMovement(node: Element): { x: number; y: number } | undefined {
+function isCardinalMovement(node: Element): boolean {
   const movement = /^(\d+) maps? (en haut|en bas|a gauche|a droite)$/u.exec(
     normalizeTravelInstruction(getNodeText(node)),
   )
 
-  if (!movement) return undefined
+  if (!movement) return false
 
   const distance = Number(movement[1])
 
-  if (distance < 1 || distance > 1000) return undefined
-
-  switch (movement[2]) {
-    case 'en haut':
-      return { x: 0, y: -distance }
-    case 'en bas':
-      return { x: 0, y: distance }
-    case 'a gauche':
-      return { x: -distance, y: 0 }
-    case 'a droite':
-      return { x: distance, y: 0 }
-    default:
-      return undefined
-  }
+  return distance >= 1 && distance <= 1000
 }
 
-function routeReachesDestination(
-  paragraphs: (Element | undefined)[],
-  zaap: Zaap,
-  destination: { x: number; y: number },
-): boolean {
-  let currentX = zaap.x
-  let currentY = zaap.y
-
-  for (const paragraph of paragraphs) {
-    if (!paragraph) return false
-
-    const movement = parseCardinalMovement(paragraph)
-
-    if (!movement) return false
-
-    currentX += movement.x
-    currentY += movement.y
-  }
-
-  return currentX === destination.x && currentY === destination.y
+function isWalkingRoute(paragraphs: (Element | undefined)[]): boolean {
+  return paragraphs.every((paragraph) => paragraph !== undefined && isCardinalMovement(paragraph))
 }
 
 function findChainableDestinations(
@@ -335,7 +304,7 @@ function findChainableDestinations(
 
     if (!zaap || zaap.worldMapId !== 1) continue
 
-    if (!routeReachesDestination(paragraphs.slice(1), zaap, destination)) continue
+    if (!isWalkingRoute(paragraphs.slice(1))) continue
 
     destinations.set(node, {
       ...destination,
