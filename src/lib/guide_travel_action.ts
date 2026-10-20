@@ -236,6 +236,12 @@ function findZaapsWithPossibleSurcharge(zaapNodes: Map<DOMNode, Zaap>, map: stri
   return surchargeZaapNodes
 }
 
+function parseCoordinate(value: string): number {
+  const coordinate = Number(value)
+
+  return coordinate === 0 ? 0 : coordinate
+}
+
 function parseTravelDestination(node: DOMNode): { x: number; y: number } | undefined {
   if (!isHtmlElement(node, 'p') || !containsOnlyInlineText(node)) return undefined
 
@@ -246,8 +252,8 @@ function parseTravelDestination(node: DOMNode): { x: number; y: number } | undef
 
   if (!destination || destination[3]) return undefined
 
-  const x = Number(destination[1])
-  const y = Number(destination[2])
+  const x = parseCoordinate(destination[1])
+  const y = parseCoordinate(destination[2])
 
   return Number.isSafeInteger(x) && Number.isSafeInteger(y) ? { x, y } : undefined
 }

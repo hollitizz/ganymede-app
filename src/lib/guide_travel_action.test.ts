@@ -1,6 +1,7 @@
 import { htmlToDOM } from 'html-react-parser'
 import { describe, expect, test, vi } from 'vitest'
 
+import downloadedRoutes from '@/lib/fixtures/downloaded_route_cases.json'
 import downloadedCases from '@/lib/fixtures/downloaded_zaap_cases.json'
 import fixtures from '@/lib/fixtures/guide_travel.json'
 import {
@@ -279,6 +280,21 @@ test('preserves the three-argument copyPosition contract used by PR #178', async
   await copyPosition(5, 7, false)
 
   expect(writeText).toHaveBeenLastCalledWith('[5,7]')
+})
+
+describe('downloaded guide routes', () => {
+  test.each(downloadedRoutes)('guide $guide / step $step / [$expected.x,$expected.y]', ({ html, map, expected }) => {
+    const destinations = [...analyzeGuideTravel(htmlToDOM(html), { ...context, map }).destinations.values()]
+
+    expect(
+      destinations.map(({ x, y, zaap, crossWorld }) => ({
+        x,
+        y,
+        zaap: zaap.id,
+        ...(crossWorld ? { crossWorld } : {}),
+      })),
+    ).toEqual([expected])
+  })
 })
 
 describe('audited downloaded guide formats', () => {
