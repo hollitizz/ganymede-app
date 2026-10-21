@@ -18,7 +18,7 @@ msgstr ""
 msgid "{0, plural, one {Étape} other {Étapes}}"
 msgstr "{0, plural, one {Passo} other {Passos}}"
 
-#: src/components/editor_html_parsing.tsx:143
+#: src/components/editor_html_parsing.tsx:146
 #: src/components/guide_copy_button.tsx:24
 #: src/components/position.tsx:15
 msgid "{content} copié"
@@ -222,43 +222,43 @@ msgstr "Seleciona Comando para copiar o zaap e usar comandos encadeados."
 msgid "Choisissez un guide"
 msgstr "Escolha um guia"
 
-#: src/components/editor_html_parsing.tsx:360
+#: src/components/editor_html_parsing.tsx:365
 msgid "Cliquez pour copier le nom de l'objet. ⌘+clic pour ouvrir sur dofusdb"
 msgstr "Clique para copiar o nome do item. ⌘+clique para abrir no dofusdb"
 
-#: src/components/editor_html_parsing.tsx:364
+#: src/components/editor_html_parsing.tsx:369
 msgid "Cliquez pour copier le nom de l'objet. ⌘+clic pour ouvrir sur MethodWakfu"
 msgstr "Clique para copiar o nome do item. ⌘+clique para abrir no MethodWakfu"
 
-#: src/components/editor_html_parsing.tsx:361
+#: src/components/editor_html_parsing.tsx:366
 msgid "Cliquez pour copier le nom de l'objet. Ctrl+clic pour ouvrir sur dofusdb"
 msgstr "Clique para copiar o nome do item. Ctrl+clique para abrir no dofusdb"
 
-#: src/components/editor_html_parsing.tsx:365
+#: src/components/editor_html_parsing.tsx:370
 msgid "Cliquez pour copier le nom de l'objet. Ctrl+clic pour ouvrir sur MethodWakfu"
 msgstr "Clique para copiar o nome do item. Ctrl+clique para abrir no MethodWakfu"
 
-#: src/components/editor_html_parsing.tsx:372
+#: src/components/editor_html_parsing.tsx:377
 msgid "Cliquez pour copier le nom de la quête. ⌘+clic pour ouvrir sur dofusdb. ⌥+clic pour ouvrir sur DPLN"
 msgstr "Clique para copiar o nome da missão. ⌘+clique para abrir no dofusdb. ⌥+clique para abrir no DPLN"
 
-#: src/components/editor_html_parsing.tsx:373
+#: src/components/editor_html_parsing.tsx:378
 msgid "Cliquez pour copier le nom de la quête. Ctrl+clic pour ouvrir sur dofusdb. Alt+clic pour ouvrir sur DPLN"
 msgstr "Clique para copiar o nome da missão. Ctrl+clique para abrir no dofusdb. Alt+clique para abrir no DPLN"
 
-#: src/components/editor_html_parsing.tsx:356
+#: src/components/editor_html_parsing.tsx:361
 msgid "Cliquez pour copier le nom du donjon. ⌘+clic pour ouvrir sur dofusdb"
 msgstr "Clique para copiar o nome do calabouço. ⌘+clique para abrir no dofusdb"
 
-#: src/components/editor_html_parsing.tsx:357
+#: src/components/editor_html_parsing.tsx:362
 msgid "Cliquez pour copier le nom du donjon. Ctrl+clic pour ouvrir sur dofusdb"
 msgstr "Clique para copiar o nome do calabouço. Ctrl+clique para abrir no dofusdb"
 
-#: src/components/editor_html_parsing.tsx:368
+#: src/components/editor_html_parsing.tsx:373
 msgid "Cliquez pour copier le nom du monstre. ⌘+clic pour ouvrir sur dofusdb"
 msgstr "Clique para copiar o nome do monstro. ⌘+clique para abrir no dofusdb"
 
-#: src/components/editor_html_parsing.tsx:369
+#: src/components/editor_html_parsing.tsx:374
 msgid "Cliquez pour copier le nom du monstre. Ctrl+clic pour ouvrir sur dofusdb"
 msgstr "Clique para copiar o nome do monstro. Ctrl+clique para abrir no dofusdb"
 
@@ -266,11 +266,11 @@ msgstr "Clique para copiar o nome do monstro. Ctrl+clique para abrir no dofusdb"
 msgid "Cliquez pour enregistrer"
 msgstr "Clique para gravar"
 
-#: src/components/editor_html_parsing.tsx:488
+#: src/components/editor_html_parsing.tsx:493
 msgid "Cliquez pour ouvrir dans le navigateur"
 msgstr "Clique para abrir no navegador"
 
-#: src/components/editor_html_parsing.tsx:460
+#: src/components/editor_html_parsing.tsx:465
 msgid "Cliquez pour ouvrir dans une nouvelle fenêtre"
 msgstr "Clique para abrir numa janela nova"
 
@@ -356,7 +356,7 @@ msgstr "Copiar passo atual"
 msgid "Copier la commande autopilote"
 msgstr "Copiar o comando do piloto automático"
 
-#: src/components/editor_html_parsing.tsx:145
+#: src/components/editor_html_parsing.tsx:149
 msgid "Copier la commande zaap"
 msgstr "Copiar o comando do zaap"
 
@@ -369,7 +369,7 @@ msgstr "Copiar a nota"
 msgid "Copier la position"
 msgstr "Copiar a posição"
 
-#: src/components/editor_html_parsing.tsx:145
+#: src/components/editor_html_parsing.tsx:149
 msgid "Copier les commandes zaap et autopilote"
 msgstr "Copiar os comandos do zaap e do piloto automático"
 
@@ -891,7 +891,7 @@ msgstr "Não foi possível instalar a atualização"
 msgid "Impossible d'obtenir le système de mise à jour"
 msgstr "Não é possível obter o sistema de actualização"
 
-#: src/components/editor_html_parsing.tsx:452
+#: src/components/editor_html_parsing.tsx:457
 msgid "Impossible d'ouvrir la fenêtre, ouverture dans le navigateur"
 msgstr "Não é possível abrir a janela, abrindo no navegador"
 

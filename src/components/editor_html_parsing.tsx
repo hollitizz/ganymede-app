@@ -19,9 +19,9 @@ import { GANYMEDE_HOST } from '@/lib/api.ts'
 import { clamp } from '@/lib/clamp.ts'
 import { copyZaap } from '@/lib/copy_position.ts'
 import { getGuideById } from '@/lib/guide.ts'
-import { analyzeGuideTravel, getTravelCopyText } from '@/lib/guide_travel_action.ts'
+import { analyzeGuideTravel, getRouteZaapAtPosition } from '@/lib/guide_travel_action.ts'
 import { getDofusPourLesNoobsUrl } from '@/lib/mapping.ts'
-import { parsePositions } from '@/lib/positions.ts'
+import { getPositionCopyContent, parsePositions } from '@/lib/positions.ts'
 import { getProgress, getProgressConfStep } from '@/lib/progress.ts'
 import { cn } from '@/lib/utils.ts'
 import { useDownloadGuideFromServer } from '@/mutations/download_guide_from_server.mutation.ts'
@@ -117,14 +117,17 @@ export function EditorHtmlParsing({
                 return <Fragment key={index}>{token.value}</Fragment>
               }
 
-              const { position, zaap } = token
+              const { position } = token
+              const zaap = token.zaap ?? (position ? getRouteZaapAtPosition(position, conf.data, route) : undefined)
+              const zaapTravelPosition =
+                position && zaap && (position.x !== zaap.x || position.y !== zaap.y) ? position : undefined
 
               return (
                 <Fragment key={index}>
                   {position && (
                     <GuideCopyButton
                       className="text-yellow-400 hover:saturate-50 focus:saturate-[12.5%]"
-                      content={getTravelCopyText(position.x, position.y, conf.data, route)}
+                      content={getPositionCopyContent(position, conf.data.autoTravelCopy)}
                       disabled={disabled}
                     >
                       [{position.x},{position.y}]
@@ -139,10 +142,12 @@ export function EditorHtmlParsing({
                       disabled={disabled}
                       id={`copy-zaap-${zaap.x}-${zaap.y}`}
                       onClick={async () => {
-                        const content = await copyZaap(zaap, position, conf.data.repeatZaapBeforeTravel)
+                        const content = await copyZaap(zaap, zaapTravelPosition, conf.data.repeatZaapBeforeTravel)
                         toast(t`${content} copié`)
                       }}
-                      title={position ? t`Copier les commandes zaap et autopilote` : t`Copier la commande zaap`}
+                      title={
+                        zaapTravelPosition ? t`Copier les commandes zaap et autopilote` : t`Copier la commande zaap`
+                      }
                       type="button"
                     >
                       <ZaapIcon />

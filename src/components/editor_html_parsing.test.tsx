@@ -92,7 +92,7 @@ test('renders real guide HTML with independent zaap, destination and checkbox ac
 
   await act(async () => getButtonByText('[11,10]').click())
 
-  expect(writeText).toHaveBeenLastCalledWith('/zaap 5 7 ; /travel 11 10')
+  expect(writeText).toHaveBeenLastCalledWith('/travel 11 10')
   expect(mocks.toggleGuideCheckbox).not.toHaveBeenCalled()
 
   await act(async () => container.querySelector('input')!.click())
@@ -103,6 +103,37 @@ test('renders real guide HTML with independent zaap, destination and checkbox ac
     checkboxIndex: 0,
     guideName: 'Moon',
   })
+})
+
+test('shows the zaap icon next to a route destination and copies the zaap and travel commands', async () => {
+  await renderGuideHtml()
+
+  await act(async () => container.querySelector<HTMLButtonElement>('#copy-zaap-5-7')!.click())
+
+  expect(writeText).toHaveBeenLastCalledWith('/zaap 5 7 ; /travel 11 10')
+})
+
+const canopyTipHtml =
+  "<p>Ensuite allez en [-54,15]</p><p>Astuce :</p><p>- Depuis le Zaap du Village de la Canopée, mettez l'autopilote en [-55,15] puis 1 map à droite d'Otomaï.</p>"
+
+test('shows the zaap icon when the zaap is mentioned in a tip after the destination', async () => {
+  client.setQueryData(['conf'], {
+    autoTravelCopy: true,
+    zaapCopyMode: 'Command',
+    useChainedCommands: true,
+    allowZaapSurcharge: true,
+  })
+
+  await renderGuideHtml(canopyTipHtml)
+  await act(async () => container.querySelector<HTMLButtonElement>('#copy-zaap--54-16')!.click())
+
+  expect(writeText).toHaveBeenLastCalledWith('/zaap -54 16 ; /travel -54 15')
+})
+
+test('hides the zaap icon of a route from another world without surcharge permission', async () => {
+  await renderGuideHtml(canopyTipHtml)
+
+  expect(container.querySelector('#copy-zaap--54-16')).toBeNull()
 })
 
 test('updates copy modes after a settings change without changing guide content', async () => {
@@ -142,6 +173,23 @@ test('copies Astrub independently in the real route through the Incarnam portal'
 
   expect(writeText).toHaveBeenLastCalledWith('/zaap 5 -18')
   expect(mocks.toggleGuideCheckbox).not.toHaveBeenCalled()
+
+  await act(async () => getButtonByText('[0,0]').click())
+
+  expect(writeText).toHaveBeenLastCalledWith('/travel 0 0')
+})
+
+test('shows the zaap icon of a route to Incarnam and copies the zaap and travel commands', async () => {
+  const fixture = fixtures.find((fixture) => fixture.html.includes('Portail vers Incarnam'))!
+  client.setQueryData(
+    ['guides'],
+    [{ id: 30, name: 'Astrub', lang: 'fr', game_type: 'dofus', steps: [{ map: 'Douze' }] }],
+  )
+
+  await renderGuideHtml(fixture.html)
+  await act(async () => container.querySelector<HTMLButtonElement>('#copy-zaap-5--18')!.click())
+
+  expect(writeText).toHaveBeenLastCalledWith('/zaap 5 -18 ; /travel 0 0')
 
   await act(async () => getButtonByText('[0,0]').click())
 
@@ -202,7 +250,9 @@ test('does not apply a route to another occurrence of the same coordinates', asy
 
   await act(async () => positions[1].click())
 
-  expect(writeText).toHaveBeenLastCalledWith('/zaap 5 7 ; /travel 11 10')
+  expect(writeText).toHaveBeenLastCalledWith('/travel 11 10')
+  expect(container.querySelectorAll('#copy-zaap-5-7')).toHaveLength(1)
+  expect(positions[1].nextElementSibling?.id).toBe('copy-zaap-5-7')
 })
 
 test('copies the Porkass zaap after the Astrub portal without chaining the route from Incarnam', async () => {
@@ -254,6 +304,7 @@ test('warns on inter-world copying and only enables chaining after surcharge per
 
   expect(writeText).toHaveBeenLastCalledWith('/travel 11 10')
   expect(toast).toHaveBeenLastCalledWith('/travel 11 10 copié', undefined)
+  expect(container.querySelector('#copy-zaap-5-7')).toBeNull()
 
   await act(async () => {
     client.setQueryData(['conf'], {
@@ -270,8 +321,12 @@ test('warns on inter-world copying and only enables chaining after surcharge per
 
   await act(async () => getButtonByText('[11,10]').click())
 
+  expect(writeText).toHaveBeenLastCalledWith('/travel 11 10')
+
+  await act(async () => container.querySelector<HTMLButtonElement>('#copy-zaap-5-7')!.click())
+
   expect(writeText).toHaveBeenLastCalledWith('/zaap 5 7 ; /travel 11 10')
-  expect(toast).toHaveBeenLastCalledWith('/zaap 5 7 ; /travel 11 10 copié', undefined)
+  expect(toast).toHaveBeenLastCalledWith('/zaap 5 7 ; /travel 11 10 copié')
   expect(mocks.toggleGuideCheckbox).not.toHaveBeenCalled()
 })
 

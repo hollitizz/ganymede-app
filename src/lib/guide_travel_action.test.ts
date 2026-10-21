@@ -50,20 +50,38 @@ describe('existing guide travel blocks', () => {
 
   test.each([
     ['Sortez', 'Zaap du Coin des Bouftous', '3 maps en bas', '6 maps à droite'],
+    ['1 map en bas', 'Zaap du Coin des Bouftous', '4 maps en haut'],
     ['Zaap du Coin des Bouftous', '3 maps en bas', 'Cliquez sur la statue', '6 maps à droite'],
     ['Zaap du Coin des Bouftous', 'Zaapi vers le Quai de la Bricole', '3 maps en bas', '6 maps à droite'],
     ['Zaap du Coin des Bouftous', '3 maps en bas', '6 maps à droite pour débloquer le zaap'],
     ['Zaap du Coin des Bouftous', 'Portail vers Incarnam'],
-    ['Ne prenez pas le Zaap du Coin des Bouftous', '3 maps en bas', '6 maps à droite'],
-    ['Zaap du lieu inconnu', '3 maps en bas', '6 maps à droite'],
-  ])('does not collapse an unsafe route: %j', (...actions) => {
-    expect(analyzeGuideHtml(createRouteHtml(actions)).destinations.size).toBe(0)
+    ['Zaap du Coin des Bouftous', '1 map à droite', '4 maps à gauche', '2 maps en bas'],
+  ])('chains a route as soon as its task list contains a zaap: %j', (...actions) => {
+    expect([...analyzeGuideHtml(createRouteHtml(actions)).destinations.values()]).toEqual([{ x: 11, y: 10, zaap }])
   })
 
-  test('chains a walking route whose map count does not reach the destination', () => {
-    const route = createRouteHtml(['Zaap du Coin des Bouftous', '1 map à droite', '4 maps à gauche', '2 maps en bas'])
+  test('chains a route whose zaap is mentioned in a tip after the destination', () => {
+    const html =
+      '<p>Ensuite <span>allez en</span> [-54,15]</p><p></p><p><span>Astuce :</span></p><p></p>' +
+      "<p>- Depuis le <span>Zaap </span>du <span>Village de la Canopée</span>, mettez l'<span>autopilote</span> en [-55,15] puis <span>1 map à droite</span> d'Otomaï.</p>"
 
-    expect([...analyzeGuideHtml(route).destinations.values()]).toEqual([{ x: 11, y: 10, zaap }])
+    expect([...analyzeGuideHtml(html).destinations.values()]).toEqual([
+      { x: -54, y: 15, zaap: resolveZaap('Zaap du Village de la Canopée'), crossWorld: true },
+    ])
+  })
+
+  test('does not take the zaap of the next destination', () => {
+    const html = '<p>Ensuite allez en [1,2]</p><p>Parlez au PNJ</p>' + createRouteHtml(['Zaap du Coin des Bouftous'])
+
+    expect([...analyzeGuideHtml(html).destinations.values()]).toEqual([{ x: 11, y: 10, zaap }])
+  })
+
+  test.each([
+    ['Ne prenez pas le Zaap du Coin des Bouftous', '3 maps en bas', '6 maps à droite'],
+    ['Zaap du lieu inconnu', '3 maps en bas', '6 maps à droite'],
+    ['Zaapi vers le Quai de la Bricole', '3 maps en bas'],
+  ])('does not chain a route without a usable zaap: %j', (...actions) => {
+    expect(analyzeGuideHtml(createRouteHtml(actions)).destinations.size).toBe(0)
   })
 
   test.each([
@@ -104,30 +122,37 @@ describe('existing guide travel blocks', () => {
     expect(getZaapCopyText(travel.zaap)).toBe('/zaap 5 7')
   })
 
-  test('surcharge permission does not bypass portals, exits or unknown starting maps', () => {
-    for (const map of [null, 'Incarnam']) {
-      const html = createRouteHtml([
-        'Zaap du Coin des Bouftous',
-        'Portail vers Astrub',
-        '3 maps en bas',
-        '6 maps à droite',
-      ])
-      const result = analyzeGuideTravel(htmlToDOM(html), { ...context, map })
+  test('chains a route from another world only with surcharge permission', () => {
+    const html = createRouteHtml([
+      'Portail vers Astrub',
+      'Zaap du Coin des Bouftous',
+      '3 maps en bas',
+      '6 maps à droite',
+    ])
+    const [travel] = analyzeGuideTravel(htmlToDOM(html), { ...context, map: 'Incarnam' }).destinations.values()
 
-      expect(result.destinations.size).toBe(0)
-      expect(getTravelCopyText(11, 10, { autoTravelCopy: true, allowZaapSurcharge: true })).toBe('/travel 11 10')
-    }
+    expect(travel).toEqual({ x: 11, y: 10, zaap, crossWorld: true })
+    expect(getTravelCopyText(11, 10, { autoTravelCopy: true }, travel)).toBe('/travel 11 10')
+    expect(getTravelCopyText(11, 10, { autoTravelCopy: true, allowZaapSurcharge: true }, travel)).toBe(
+      '/zaap 5 7 ; /travel 11 10',
+    )
   })
 
-  test('does not chain a destination in Incarnam even if directions match', () => {
+  test('does not chain a route from an unknown starting map', () => {
+    const html = createRouteHtml(['Zaap du Coin des Bouftous', '3 maps en bas', '6 maps à droite'])
+
+    expect(analyzeGuideTravel(htmlToDOM(html), { ...context, map: null }).destinations.size).toBe(0)
+  })
+
+  test('marks a destination in Incarnam without chaining travel after the zaap', () => {
     const html = createRouteHtml(['Zaap du Coin des Bouftous', '3 maps en bas', '6 maps à droite']).replace(
       '[11,10]',
       '[11,10] en Incarnam.',
     )
-    const result = analyzeGuideHtml(html)
+    const [travel] = analyzeGuideHtml(html).destinations.values()
 
-    expect(result.zaapNodes.size).toBe(1)
-    expect(result.destinations.size).toBe(0)
+    expect(travel).toEqual({ x: 11, y: 10, zaap, destinationInIncarnam: true })
+    expect(getTravelCopyText(11, 10, { autoTravelCopy: true }, travel)).toBe('/travel 11 10')
   })
 
   test('does not associate unrelated or repeated coordinates elsewhere in the step', () => {
@@ -136,8 +161,10 @@ describe('existing guide travel blocks', () => {
     expect(result.destinations.size).toBe(1)
   })
 
-  test('stops at an interaction between the destination and the list', () => {
-    expect(analyzeGuideHtml(moon.replace('<ul', '<p>Parlez au PNJ.</p><ul')).destinations.size).toBe(0)
+  test('chains a route whose list follows another instruction after the destination', () => {
+    expect([...analyzeGuideHtml(moon.replace('<ul', '<p>Parlez au PNJ.</p><ul')).destinations.values()]).toEqual([
+      { x: 11, y: 10, zaap },
+    ])
   })
 
   test('does not inspect a quest block or a link as a travel block', () => {
@@ -287,11 +314,12 @@ describe('downloaded guide routes', () => {
     const destinations = [...analyzeGuideTravel(htmlToDOM(html), { ...context, map }).destinations.values()]
 
     expect(
-      destinations.map(({ x, y, zaap, crossWorld }) => ({
+      destinations.map(({ x, y, zaap, crossWorld, destinationInIncarnam }) => ({
         x,
         y,
         zaap: zaap.id,
         ...(crossWorld ? { crossWorld } : {}),
+        ...(destinationInIncarnam ? { destinationInIncarnam } : {}),
       })),
     ).toEqual([expected])
   })

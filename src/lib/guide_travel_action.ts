@@ -18,7 +18,7 @@ export type TravelPreferences = Pick<
   Conf,
   'autoTravelCopy' | 'zaapCopyMode' | 'useChainedCommands' | 'allowZaapSurcharge' | 'repeatZaapBeforeTravel'
 >
-export type GuideTravel = { x: number; y: number; zaap: Zaap; crossWorld?: boolean }
+export type GuideTravel = { x: number; y: number; zaap: Zaap; crossWorld?: boolean; destinationInIncarnam?: boolean }
 export type InlineZaap = { start: number; end: number; zaap: Zaap }
 
 function normalizeTravelInstruction(value: string): string {
@@ -242,7 +242,7 @@ function parseCoordinate(value: string): number {
   return coordinate === 0 ? 0 : coordinate
 }
 
-function parseTravelDestination(node: DOMNode): { x: number; y: number } | undefined {
+function parseTravelDestination(node: DOMNode): { x: number; y: number; destinationInIncarnam?: boolean } | undefined {
   if (!isHtmlElement(node, 'p') || !containsOnlyInlineText(node)) return undefined
 
   const destination =
@@ -250,43 +250,51 @@ function parseTravelDestination(node: DOMNode): { x: number; y: number } | undef
       normalizeTravelInstruction(getNodeText(node)),
     )
 
-  if (!destination || destination[3]) return undefined
+  if (!destination) return undefined
 
   const x = parseCoordinate(destination[1])
   const y = parseCoordinate(destination[2])
 
-  return Number.isSafeInteger(x) && Number.isSafeInteger(y) ? { x, y } : undefined
+  if (!Number.isSafeInteger(x) || !Number.isSafeInteger(y)) return undefined
+
+  return destination[3] ? { x, y, destinationInIncarnam: true } : { x, y }
 }
 
-function findFollowingTaskList(nodes: DOMNode[], headingIndex: number): Element | undefined {
-  let nextIndex = headingIndex + 1
+function findZaapInNode(
+  node: DOMNode,
+  zaapNodes: Map<DOMNode, Zaap>,
+  inlineZaapNodes: Map<DOMNode, InlineZaap>,
+): Zaap | undefined {
+  for (const contentNode of iterateGuideContentNodes([node])) {
+    const zaap = zaapNodes.get(contentNode) ?? inlineZaapNodes.get(contentNode)?.zaap
 
-  while (nextIndex < nodes.length && isBlankGuideNode(nodes[nextIndex])) nextIndex++
+    if (zaap) return zaap
+  }
 
-  const node = nodes[nextIndex]
-
-  return node && isHtmlElement(node, 'ul') && node.attribs['data-type'] === 'taskList' ? node : undefined
+  return undefined
 }
 
-function isCardinalMovement(node: Element): boolean {
-  const movement = /^(\d+) maps? (en haut|en bas|a gauche|a droite)$/u.exec(
-    normalizeTravelInstruction(getNodeText(node)),
-  )
+function findRouteZaap(
+  nodes: DOMNode[],
+  destinationIndex: number,
+  zaapNodes: Map<DOMNode, Zaap>,
+  inlineZaapNodes: Map<DOMNode, InlineZaap>,
+): Zaap | undefined {
+  for (const node of nodes.slice(destinationIndex + 1)) {
+    if (parseTravelDestination(node)) return undefined
 
-  if (!movement) return false
+    const zaap = findZaapInNode(node, zaapNodes, inlineZaapNodes)
 
-  const distance = Number(movement[1])
+    if (zaap) return zaap
+  }
 
-  return distance >= 1 && distance <= 1000
-}
-
-function isWalkingRoute(paragraphs: (Element | undefined)[]): boolean {
-  return paragraphs.every((paragraph) => paragraph !== undefined && isCardinalMovement(paragraph))
+  return undefined
 }
 
 function findChainableDestinations(
   nodes: DOMNode[],
   zaapNodes: Map<DOMNode, Zaap>,
+  inlineZaapNodes: Map<DOMNode, InlineZaap>,
   map: string | null | undefined,
 ): Map<DOMNode, GuideTravel> {
   const destinations = new Map<DOMNode, GuideTravel>()
@@ -299,18 +307,9 @@ function findChainableDestinations(
 
     if (!destination) continue
 
-    const taskList = findFollowingTaskList(nodes, index)
+    const zaap = findRouteZaap(nodes, index, zaapNodes, inlineZaapNodes)
 
-    if (!taskList) continue
-
-    const items = taskList.children.filter((child) => child.type !== 'text' || child.data.trim()) as DOMNode[]
-    const paragraphs = items.map(getTaskItemParagraph)
-    const firstParagraph = paragraphs[0]
-    const zaap = firstParagraph ? zaapNodes.get(firstParagraph) : undefined
-
-    if (!zaap || zaap.worldMapId !== 1) continue
-
-    if (!isWalkingRoute(paragraphs.slice(1))) continue
+    if (!zaap) continue
 
     destinations.set(node, {
       ...destination,
@@ -347,7 +346,7 @@ export function analyzeGuideTravel(
   for (const [node, mention] of inlineZaapNodes) allZaapNodes.set(node, mention.zaap)
 
   return {
-    destinations: findChainableDestinations(nodes, zaapNodes, context.map),
+    destinations: findChainableDestinations(nodes, zaapNodes, inlineZaapNodes, context.map),
     zaapNodes,
     surchargeZaapNodes: findZaapsWithPossibleSurcharge(allZaapNodes, context.map),
     inlineZaapNodes,
@@ -362,6 +361,18 @@ export function getZaapCopyText(zaap: Zaap, mode: Conf['zaapCopyMode'] = DEFAULT
   return getPositionCopyContent(zaap, false)
 }
 
+export function getRouteZaapAtPosition(
+  position: Coordinates,
+  preferences: Pick<TravelPreferences, 'allowZaapSurcharge'>,
+  travel?: GuideTravel,
+): Zaap | undefined {
+  if (travel?.x !== position.x || travel.y !== position.y) return undefined
+
+  if (travel.crossWorld && preferences.allowZaapSurcharge !== true) return undefined
+
+  return travel.zaap
+}
+
 export function getTravelCopyText(x: number, y: number, preferences: TravelPreferences, travel?: GuideTravel): string {
   const positionCopyText = getPositionCopyContent({ x, y }, preferences.autoTravelCopy)
 
@@ -372,6 +383,7 @@ export function getTravelCopyText(x: number, y: number, preferences: TravelPrefe
     (preferences.zaapCopyMode ?? DEFAULT_ZAAP_COPY_MODE) === 'Command' &&
     travel?.x === x &&
     travel.y === y &&
+    !travel.destinationInIncarnam &&
     (!travel.crossWorld || preferences.allowZaapSurcharge === true)
   ) {
     const isZaapDestination = travel.zaap.x === x && travel.zaap.y === y
